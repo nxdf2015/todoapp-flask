@@ -24,31 +24,35 @@ class Todo(db.Model):
         return f"description={self.description}, completed={self.completed}"
     
 
-
-# Todo.query.delete()
-
-# db.session.commit()
-# todo = Todo(description="todo 1")
-
-# db.session.add(todo)
-# db.session.commit()
-
-# todos = Todo.query.all()
-# print(todos)
+class List(db.Model):
+    __tablename__ = "lists"
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String, nullable=False)
 
 
 @app.route("/")
 def home():
     
-    print(Todo.query.all())
-    
-    return render_template("index.html",data=Todo.query.order_by(Todo.id).all())
+    data = {
+        "todos":Todo.query.order_by(Todo.id).all(),
+        "lists":List.query.order_by(List.id).all()
+
+    }
+    return render_template("index.html",data=data)
 
 
-@app.route("/create" , methods=["post"])
-def create():
+@app.route("/create/list", methods=["post"])
+def create_list():
     description = request.form["description"]
-    print(description)
+    new_list = List(description=description)
+    db.session.add(new_list)
+    db.session.commit()
+    return redirect(url_for("home"))
+
+
+@app.route("/create/todo" , methods=["post"])
+def create_todo():
+    description = request.form["description"]
     new_todo = Todo(description=description)
     db.session.add(new_todo)
     db.session.commit()
@@ -59,7 +63,6 @@ def create():
 @app.route("/completed/<int:id>")
 def completed(id):
     todo = Todo.query.get(id)
-    print("-------------------------------",todo)
     todo.completed= not (todo.completed)
     db.session.commit()
     return jsonify({"completed" : todo.completed })

@@ -4,24 +4,49 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
     <title>Document</title>
 </head>
 <body>
     <h1>todo app</h1>
-    <div class="container form">
-        <form action="/create" method="POST">
-            <input type="text" name="description" id="description">
-            <input type="submit" value="submit">
-        </form>
-    </div>
-    <div class="container data">
-        {% for todo in data %}
-        <li class="todo">
-            <input type="checkbox" data-id="{{todo.id}}" name="completed" class="todo-completed" {% if todo.completed %} checked {% endif %}>
-            {{todo.description}}
-            <button class="todo-remove" data-id="{{todo.id}}">x</button>
-        </li>
-        {% endfor %}
+    <div class="container-app">
+
+        <div class="container list-todo">
+            <div class="form-list">
+                <form action="/create/list" method="POST">
+                    <input type="text" name="description" class="description">
+                    <input type="submit" value="create list">
+                </form>
+            </div>
+            <div class="list">
+                <ul>
+                    {% for item in data.lists %}
+                        <li>
+                            {{item.description}} <button>x</button>
+                        </li>
+                    {% endfor %}
+                </ul>
+    
+            </div>
+        </div>
+        <div class="container data">
+            <div class="form-todo">
+                <form action="/create/todo" method="POST">
+                    <input type="text" name="description" class="description">
+                    <input type="submit" value="add todo">
+                </form>
+            </div>
+            <ul class="todos">
+                {% for todo in data.todos %}
+                <li class="todo">
+                    <input type="checkbox" data-id="{{todo.id}}" name="completed" class="todo-completed" {% if todo.completed %} checked {% endif %}>
+                    {{todo.description}}
+                    <button class="todo-remove" data-id="{{todo.id}}">x</button>
+                </li> 
+                 {% endfor %}
+            </ul>
+          
+        </div>
     </div>
  
 <script>
@@ -48,6 +73,7 @@
     }
 
     
+     
 
     completed = document.querySelectorAll(".todo-completed")
 
