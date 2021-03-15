@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>todo app</h1>
+    <div class="container form">
+        <form action="/create" method="POST">
+            <input type="text" name="description" id="description">
+            <input type="submit" value="submit">
+        </form>
+    </div>
+    <div class="container data">
+        {% for todo in data %}
+        <li class="todo">
+            <input type="checkbox" data-id="{{todo.id}}" name="completed" class="todo-completed" {% if todo.completed %} checked {% endif %}>
+            {{todo.description}}
+            <button class="todo-remove" data-id="{{todo.id}}">x</button>
+        </li>
+        {% endfor %}
+    </div>
+ 
+<script>
+    function handler(route){
+     return   event => {
+       const   id = event.target.dataset.id
+       fetch(`/${route}/${id}`,{
+           method:"get"
+       })
+       .then(response => {
+           console.log(window.location)
+           window.location.reload(true)
+
+       })
+       .catch(error => {
+           console.log(error)
+       })
+    }
+    }
+    
+
+    function addListener(event,route){
+        return data => data.addEventListener(event,handler(route))
+    }
+
+    
+
+    completed = document.querySelectorAll(".todo-completed")
+
+    removeBtn = document.querySelectorAll(".todo-remove")
+    
+    Array.from(removeBtn).map(addListener("click","remove"))
+   
+    Array.from(completed).map(addListener("change","completed"))
+</script>
+</body>
+</html>
